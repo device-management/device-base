@@ -1,0 +1,20 @@
+#.travis.yml
+sudo: required
+
+language: node_js
+node_js:
+  - "7"
+
+branches:
+  only:
+    - develop
+    - master
+
+before_script:
+  - npm install
+
+script:
+  - npm run build
+
+after_success:
+  - npm publish --access=public
