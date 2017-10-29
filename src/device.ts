@@ -10,15 +10,15 @@ export namespace DeviceManager {
 
         protected mqttClient: MqttClient;
 
-        constructor(private mqttConfig: MqttConfig, protected deviceDescription: DeviceDescription) {
+        constructor(private mqttConfig: MqttConfig, protected device: DeviceDescription) {
             super();
             this.options = {
-                clientId: this.deviceDescription.deviceId,
+                clientId: this.device.id,
                 will: {
-                    topic: "devices/" + this.deviceDescription.deviceId + "/state",
+                    topic: "devices/" + this.device.id + "/state",
                     payload: JSON.stringify({
-                        deviceId: this.deviceDescription.deviceId,
-                        properties: {
+                        id: this.device.id,
+                        state: {
                             isOnline: false
                         }
                     }),
@@ -31,7 +31,7 @@ export namespace DeviceManager {
         protected doStart(): Observable<any> {
             let subject = new ReplaySubject();
             let client = this.mqttClient = connect(this.mqttConfig.brokerAddress, this.options);
-            let device = this.deviceDescription;
+            let device = this.device;
             client.on('error', function () {
                 let message = "Cannot connect to the message broker.";
                 console.log(message);
@@ -41,7 +41,7 @@ export namespace DeviceManager {
             client.on('connect', function () {
                 console.log("Connected with the message broker. Registering device...")
                 client.publish(
-                    "devices/" + device.deviceId + "/register",
+                    "devices/" + device.id + "/register",
                     JSON.stringify(device),
                     {
                         qos: 1,
@@ -68,8 +68,11 @@ export namespace DeviceManager {
     }
 
     export interface DeviceDescription {
-        deviceId: string;
-        properties: any;
+        id: string;
+        name: string;
+        type: string;
+        configuration: any;
+        state: any;
     }
 
     export interface MqttConfig {

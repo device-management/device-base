@@ -1,6 +1,6 @@
 {
   "name": "@device-management/device-base",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Represents a base implementation of device handling.",
   "license": "MIT",
   "repository": "https://github.com/device-management/device-base",
